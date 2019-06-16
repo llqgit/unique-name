@@ -20,11 +20,14 @@ func GetMaxBinaryDigitFromDecimalDigit(length int) uint {
 func GetRandomIdName(num uint64, length int) uint64 {
 
 	// 根据此二进制位数，将数字拆成长度相等的两个部分
-	bits := uint(math.Floor(float64(GetMaxBinaryDigitFromDecimalDigit(length)) / 2))
-	//fmt.Printf("digit: [%v]\n", bits)
+	bitLength := GetMaxBinaryDigitFromDecimalDigit(length)
+	bits := uint(math.Floor(float64(bitLength) / 2))
+	//fmt.Printf("length: [%v] maxLength: [%v] digit: [%v]\n", length, GetMaxBinaryDigitFromDecimalDigit(length), bits)
 
-	l1 := num >> bits             // 头部
-	r1 := num & ((1 << bits) - 1) // 尾部
+	newNum := num + uint64(math.Pow10(length-1))
+
+	l1 := newNum >> bits             // 头部
+	r1 := newNum & ((1 << bits) - 1) // 尾部
 	var l2, r2 uint64
 
 	// 循环 3 轮
@@ -34,9 +37,11 @@ func GetRandomIdName(num uint64, length int) uint64 {
 		//fmt.Printf("l1: [%b] r1: [%b] l2: [%b] r2: [%b] .. [%b]\n", l1, r1, l2, r2, uint64(math.Round((float64)(((1366*r1+150889)%714025)/714025.0)*12344)))
 		l1 = l2
 		r1 = r2
-
 	}
 	result := (r1 << bits) + l1
+	//if result < uint64(math.Pow10(length)) {
+	//result |= (1 << bitLength) - 1
+	//}
 	return result
 }
 
